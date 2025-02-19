@@ -38,6 +38,20 @@ struct ContentView: View {
             
             Text("Your Cat Pic of the day!")
                 .padding()
+            
+            Button(action: {
+                Task {
+                    isLoading = true
+                    await loadCatImage()
+                }
+            }) {
+                Label("New Cat", systemImage: "arrow.clockwise")
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+            }
+            .disabled(isLoading)
         }
         .padding()
         .task {
