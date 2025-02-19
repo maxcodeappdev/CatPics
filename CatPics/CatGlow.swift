@@ -1,21 +1,19 @@
 //
-//  ContentView.swift
+//  CatGlow.swift
 //  CatPics
 //
-//  Created by Max Contreras on 2/18/25.
+//  Created by Max Contreras on 2/19/25.
 //
 
 import SwiftUI
 
-struct ContentView: View {
-    @State private var imageURL: String?
-    @State private var isLoading = true
-    
+struct CatGlow: View {
 
+  @State private var imageURL: String?
+  @State private var isLoading = true
   
   var body: some View {
       ZStack {
-     
           VStack {
               Spacer()
               
@@ -28,13 +26,23 @@ struct ContentView: View {
                       case .empty:
                           ProgressView()
                       case .success(let image):
-                          image
-                              .resizable()
-                              .aspectRatio(contentMode: .fit)
-                          
-                              .padding()
+                          ZStack {
+                              // Blurred background glow
+                              image
+                                  .resizable()
+                                  .aspectRatio(contentMode: .fit)
+                                  .blur(radius: 20)
+                                  .opacity(0.7)
+                                  .brightness(0.1)
+                              
+                              // Main image
+                              image
+                                  .resizable()
+                                  .aspectRatio(contentMode: .fit)
+                          }
+                          .padding()
                       case .failure(_):
-                          Image("photo")
+                          Image(systemName: "photo.fill")
                               .imageScale(.large)
                               .foregroundStyle(.red)
                       @unknown default:
@@ -43,8 +51,10 @@ struct ContentView: View {
                   }
               }
               
-              Text("Your Cat Pic of the day!")
+              Text("Your Magical Cat Pic!")
                   .padding()
+                  .font(.title2)
+                  .fontWeight(.medium)
               
               Spacer()
           }
@@ -58,40 +68,39 @@ struct ContentView: View {
                       await loadCatImage()
                   }
               }) {
-                  Label("New Cat", systemImage: "arrow.clockwise")
+                  Label("New Magical Cat", systemImage: "sparkles")
                       .padding(.horizontal, 20)
                       .padding(.vertical, 12)
-                      .background(Color.blue)
+                      .background(Color.purple.gradient)
                       .foregroundColor(.white)
                       .cornerRadius(10)
               }
               .disabled(isLoading)
-              .padding(.bottom, 20) // Add some padding from bottom of screen
+              .padding(.bottom, 20)
           }
-    
       }
       .padding()
       .task {
           await loadCatImage()
-        
-        
-        
       }
   }
-    
-    func loadCatImage() async {
-        do {
-            imageURL = try await CatImageService.shared.fetchRandomCatImage()
-        } catch {
-            print("Error loading cat image: \(error)")
-        }
-        
-        isLoading = false
-    }
+  
+  
+  func loadCatImage() async {
+      do {
+          imageURL = try await CatImageService.shared.fetchRandomCatImage()
+      } catch {
+          print("Error loading cat image: \(error)")
+      }
+      
+      isLoading = false
+  }
+  
+  
 }
 
 #Preview {
-    ContentView()
+    CatGlow()
 }
 
 
